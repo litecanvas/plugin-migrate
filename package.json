@@ -1,0 +1,34 @@
+{
+  "name": "@litecanvas/plugin-migrate",
+  "version": "0.0.1",
+  "description": "Migrate Plugin makes this easier, by restoring the Litecanvas APIs that were removed in newer versions, and additionally shows warnings in the browser console when removed and/or deprecated APIs are used.",
+  "author": "Luiz Bills <luizbills@pm.me>",
+  "license": "MIT",
+  "homepage": "https://github.com/user/repo",
+  "bugs": {
+    "url": "https://github.com/user/repo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/user/repo.git#main"
+  },
+  "main": "src/index.js",
+  "keywords": [
+    "litecanvas"
+  ],
+  "scripts": {
+    "dev": "esbuild src/_web.js --bundle --watch --outfile=dist/dist.js --servedir=.",
+    "build": "esbuild src/_web.js --bundle --minify --outfile=dist/dist.js",
+    "prepare": "npm run build"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.5"
+  },
+  "peerDependencies": {
+    "litecanvas": "latest"
+  },
+  "files": [
+    "dist",
+    "src"
+  ]
+}
