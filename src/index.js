@@ -158,7 +158,7 @@ export default function plugin(engine, config = defaults) {
   }
 
   function setvar(key, value) {
-    warn("setvar()", "_core_def()")
+    warn("setvar()", "def()")
     _def(key, value)
   }
 
@@ -185,7 +185,11 @@ export default function plugin(engine, config = defaults) {
     }
   }
 
-  warn("FPS", "some library to measure the FPS")
+  warn(
+    "FPS",
+    "some library to measure the FPS",
+    "Recommendation: https://github.com/mrdoob/stats.js/"
+  )
   _core_def("FPS", "")
 
   if (settings.fps) {

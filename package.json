@@ -1,6 +1,6 @@
 {
   "name": "@litecanvas/plugin-migrate",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Migrate Plugin makes this easier, by restoring the Litecanvas APIs that were removed in newer versions, and additionally shows warnings in the browser console when removed and/or deprecated APIs are used.",
   "author": "Luiz Bills <luizbills@pm.me>",
   "license": "MIT",
