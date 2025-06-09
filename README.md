@@ -1,4 +1,4 @@
-# Migrate Plugin for litecanvas
+# Migrate Plugin for Litecanvas
 
 Migrate Plugin makes this easier, by restoring the Litecanvas APIs that were removed in newer versions, and additionally shows warnings in the browser console when removed and/or deprecated APIs are used.
 

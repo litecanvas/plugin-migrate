@@ -20,18 +20,24 @@
     <script>
       litecanvas()
 
-      use(pluginName) // load the plugin
+      use(pluginMigrate)
 
       function init() {
-        //
+        console.log(`WIDTH = ${WIDTH} | W = ${W}`)
+        console.log(`HEIGHT = ${HEIGHT} | H = ${H}`)
+        console.log(`CENTERX = ${CENTERX} | CX = ${CX}`)
+        console.log(`CENTERY = ${CENTERY} | CY = ${CY}`)
       }
 
-      function update(dt) {
-        //
+      function tap(dt) {
+        console.log(`ELAPSED = ${ELAPSED} | T = ${T}`)
+        console.log(`MOUSEX = ${MOUSEX} | MX = ${MX}`)
+        console.log(`MOUSEY = ${MOUSEY} | MY = ${MY}`)
       }
 
       function draw() {
         cls(0)
+        text(0, 0, "Open your browser console")
       }
     </script>
   </body>

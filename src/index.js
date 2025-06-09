@@ -17,86 +17,203 @@ export default function plugin(engine, config = defaults) {
     throw 'Plugin Migrate should be loaded before the "init" event'
   }
 
-  function warn(old, current) {
-    if (!config.mute) console.warn(`${old} is removed. Use ${current} instead.`)
+  const settings = engine.stat(0)
+
+  function warn(old, current, extra = "") {
+    if (!config.mute)
+      console.warn(
+        `[Migrate] warning: ${old} is removed. ` +
+          (current ? `Use ${current} instead. ` : "") +
+          extra
+      )
   }
 
   function seed(value) {
-    warn("seed", "rseed")
+    warn("seed()", "rseed()")
     if (value) {
       engine.rseed(value)
     }
     return engine.stat(9)
   }
 
+  let _fontStyle = ""
+  function textstyle(value) {
+    warn("textstyle()", "the 5th param of text()")
+    _fontStyle = value
+  }
+
+  const _core_text = engine.text
+  function _text(x, y, str, color = 3, style = _fontStyle) {
+    _core_text(x, y, str, color, style)
+  }
+
   function print(x, y, str, color) {
-    warn("print", "text")
-    engine.text(x, y, str, color)
+    warn("print()", "text()")
+    _text(x, y, str, color)
+  }
+
+  function textmetrics(text, size) {
+    warn("textmetrics()", "ctx().measureText()")
+    const _ctx = engine.ctx()
+    const _fontSize = engine.stat(10)
+    const _fontFamily = engine.stat(11)
+    _ctx.font = `${_fontStyle || ""} ${~~(size || _fontSize)}px ${_fontFamily}`
+    const metrics = _ctx.measureText(text)
+    metrics.height =
+      metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent
+    return metrics
+  }
+
+  function cliprect(x, y, width, height) {
+    warn("cliprect()", "clip()")
+    const _ctx = engine.ctx()
+    _ctx.beginPath()
+    _ctx.rect(x, y, width, height)
+    _ctx.clip()
+  }
+
+  function clipcirc(x, y, radius) {
+    warn("clipcirc()", "clip()")
+    const _ctx = engine.ctx()
+    _ctx.beginPath()
+    _ctx.arc(x, y, radius, 0, engine.TWO_PI)
+    _ctx.clip()
+  }
+
+  function getcolor(index) {
+    warn("getcolor()", "stat(5)")
+    const colors = stat(5)
+    return colors[~~index % colors.length]
+  }
+
+  function blendmode(value) {
+    warn("blendmode()", "ctx().globalCompositeOperation")
+    const _ctx = engine.ctx()
+    _ctx.globalCompositeOperation = value
   }
 
   function clear(color) {
-    warn("clear", "cls")
+    warn("clear()", "cls()")
     engine.cls(x, y, str, color)
   }
 
+  function transform(a, b, c, d, e, f, resetFirst = true) {
+    warn("transform()", "ctx().setTransform() or ctx().transform()")
+    const _ctx = engine.ctx()
+    return _ctx[resetFirst ? "setTransform" : "transform"](a, b, c, d, e, f)
+  }
+
+  function mousepos() {
+    warn("mousepos()", "MX and MY")
+    return [MX, MY]
+  }
+
   function setfps(value) {
-    warn("setfps", "framerate")
+    warn("setfps()", "framerate()")
     engine.framerate(value)
   }
 
-  function setvar(key, value) {
-    warn("setvar", "def")
-    _def(key, value)
-  }
-
-  const def = engine.def
+  const _core_def = engine.def
   function _def(key, value) {
     switch (key) {
       case "W":
       case "WIDTH":
-        def("W", value)
-        def("WIDTH", value)
+        _core_def("W", value)
+        _core_def("WIDTH", value)
         break
       case "H":
       case "HEIGHT":
-        def("H", value)
-        def("HEIGHT", value)
+        _core_def("H", value)
+        _core_def("HEIGHT", value)
         break
       case "T":
       case "ELAPSED":
-        def("T", value)
-        def("ELAPSED", value)
+        _core_def("T", value)
+        _core_def("ELAPSED", value)
         break
       case "CX":
       case "CENTERX":
-        def("CX", value)
-        def("CENTERX", value)
+        _core_def("CX", value)
+        _core_def("CENTERX", value)
         break
       case "CY":
       case "CENTERY":
-        def("CY", value)
-        def("CENTERY", value)
+        _core_def("CY", value)
+        _core_def("CENTERY", value)
         break
       case "MX":
       case "MOUSEX":
-        def("MX", value)
-        def("MOUSEX", value)
+        _core_def("MX", value)
+        _core_def("MOUSEX", value)
         break
       case "MY":
       case "MOUSEY":
-        def("MY", value)
-        def("CENTERY", value)
+        _core_def("MY", value)
+        _core_def("MOUSEY", value)
         break
       default:
+        _core_def(key, value)
         break
     }
   }
 
+  function setvar(key, value) {
+    warn("setvar()", "_core_def()")
+    _def(key, value)
+  }
+
+  function resize(width, height) {
+    if (settings.autoscale) {
+      throw "resize() don't works with autoscale enabled"
+    }
+
+    warn("resize()", null, "Avoid changing the canvas dimensions at runtime.")
+    engine.CANVAS.width = width
+    _def("W", width)
+    _def("CX", width / 2)
+
+    engine.CANVAS.height = height
+    _def("H", height)
+    _def("CY", height / 2)
+
+    engine.emit("resized", 1)
+  }
+
+  for (const key of ["W", "H", "T", "CX", "CY", "MX", "MY"]) {
+    if (null != engine[key]) {
+      _def(key, engine[key])
+    }
+  }
+
+  warn("FPS", "some library to measure the FPS")
+  _core_def("FPS", "")
+
+  if (settings.fps) {
+    engine.framerate(settings.fps)
+  }
+
+  if (settings.background >= 0) {
+    const colors = stat(5)
+    engine.CANVAS.style.backgroundColor =
+      colors[~~settings.background % colors.length]
+  }
+
   return {
+    def: _def,
     seed,
     print,
     clear,
     setfps,
     setvar,
+    textstyle,
+    textmetrics,
+    text: _text,
+    cliprect,
+    clipcirc,
+    blendmode,
+    transform,
+    getcolor,
+    mousepos,
+    resize,
   }
 }

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,
+    user-scalable=no, initial-scale=1, maximum-scale=1, user-scalable=0"
+    />
+    <title>Litecanvas Plugin</title>
+    <style type="text/css">
+      body {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://unpkg.com/litecanvas/dist/dist.js"></script>
+    <script src="../dist/dist.js"></script>
+    <script>
+      const e = litecanvas({
+        global: location.search.includes("global"),
+      })
+
+      e.use(pluginMigrate)
+
+      function init() {
+        e.setvar("FOO", "bar")
+        console.log(e.FOO, globalThis.FOO)
+      }
+
+      function draw() {
+        e.cls(0)
+
+        e.text(0, 20, "property: " + ("bar" === e.FOO ? "YES" : "NO"))
+        e.text(0, 0, "global: " + ("bar" === globalThis.FOO ? "YES" : "NO"))
+      }
+    </script>
+  </body>
+</html>
