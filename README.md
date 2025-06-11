@@ -10,6 +10,8 @@ Sometimes upgrading litecanvas to a new version can be a lot of work. This plugi
 
 ## Usage
 
+In that example, `clear` and `print` will not cause errors, because this plugin restores these old functions that no longer exist in the latest versions of Litecanvas.
+
 ```js
 litecanvas({
   loop: { init, draw },
@@ -18,8 +20,7 @@ litecanvas({
 use(pluginMigrate)
 
 function draw() {
-  clear(0) // clear() was a alias for cls()
-
-  print(0, 0, "Hello World") // print() was a alias for text()
+  clear(0)
+  print(0, 0, "Hello World")
 }
 ```
