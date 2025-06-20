@@ -95,7 +95,7 @@ export default function plugin(engine, config = {}) {
 
   function clear(color) {
     warn("clear()", "cls()")
-    engine.cls(x, y, str, color)
+    engine.cls(color)
   }
 
   function transform(a, b, c, d, e, f, resetFirst = true) {
