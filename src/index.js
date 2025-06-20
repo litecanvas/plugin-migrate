@@ -7,10 +7,11 @@ const defaults = {
 /**
  *
  * @param {LitecanvasInstance} engine
- * @param {object} config
+ * @param {typeof defaults} config
  * @returns any
  */
-export default function plugin(engine, config = defaults) {
+export default function plugin(engine, config = {}) {
+  config = Object.assign({}, defaults, config)
   const initialized = engine.stat(1)
 
   if (initialized) {
