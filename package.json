@@ -1,6 +1,6 @@
 {
   "name": "@litecanvas/plugin-migrate",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "Sometimes upgrading litecanvas to a new version can be a lot of work. This plugin makes this easier, by restoring the Litecanvas APIs that were removed in newer versions, and additionally shows warnings in the browser console when removed and/or deprecated APIs are used.",
   "author": "Luiz Bills <luizbills@pm.me>",
   "license": "MIT",
@@ -25,7 +25,8 @@
     "esbuild": "^0.25.5"
   },
   "peerDependencies": {
-    "litecanvas": "latest"
+    "litecanvas": "latest",
+    "@litecanvas/utils": "latest"
   },
   "files": [
     "dist",

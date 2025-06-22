@@ -17,7 +17,10 @@ litecanvas({
   loop: { init, draw },
 })
 
-use(pluginMigrate)
+use(pluginMigrate, {
+  // set to `false` to not show warnings in the console (default is true)
+  warnings: true,
+})
 
 function draw() {
   clear(0)

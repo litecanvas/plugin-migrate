@@ -1,7 +1,9 @@
 import "litecanvas"
 
+import { colrect, colcirc } from "@litecanvas/utils"
+
 const defaults = {
-  mute: false,
+  warnings: true,
 }
 
 /**
@@ -21,7 +23,7 @@ export default function plugin(engine, config = {}) {
   const settings = engine.stat(0)
 
   function warn(old, current, extra = "") {
-    if (!config.mute)
+    if (config.warnings)
       console.warn(
         `[Migrate] warning: ${old} is removed. ` +
           (current ? `Use ${current} instead. ` : "") +
@@ -163,6 +165,17 @@ export default function plugin(engine, config = {}) {
     _def(key, value)
   }
 
+  // restore CX and CY removed in v0.84
+  engine.listen("resized", onResize)
+  function onResize() {
+    _def("CX", engine.W / 2)
+    _def("CY", engine.H / 2)
+  }
+  onResize()
+
+  // restore CANVAS removed in v0.84
+  _def("CANVAS", engine.canvas())
+
   function resize(width, height) {
     if (settings.autoscale) {
       throw "resize() don't works with autoscale enabled"
@@ -220,5 +233,9 @@ export default function plugin(engine, config = {}) {
     getcolor,
     mousepos,
     resize,
+
+    // restore collision utils
+    colrect,
+    colcirc,
   }
 }
