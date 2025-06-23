@@ -12,6 +12,7 @@
     "type": "git",
     "url": "git+https://github.com/litecanvas/plugin-migrate.git#main"
   },
+  "type": "module",
   "main": "src/index.js",
   "keywords": [
     "litecanvas"
@@ -19,17 +20,30 @@
   "scripts": {
     "dev": "esbuild src/_web.js --bundle --watch --outfile=dist/dist.js --servedir=.",
     "build": "esbuild src/_web.js --bundle --minify --outfile=dist/dist.js",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "test": "ava --tap | tap-min"
   },
   "devDependencies": {
-    "esbuild": "^0.25.5"
+    "esbuild": "^0.25.5",
+    "@litecanvas/jsdom-extras": "^1.1.0",
+    "@types/jsdom": "^21.1.7",
+    "ava": "^6.4.0",
+    "jsdom": "^26.1.0",
+    "tap-min": "^3.0.0"
+  },
+  "dependencies": {
+    "@litecanvas/utils": "latest"
   },
   "peerDependencies": {
-    "litecanvas": "latest",
-    "@litecanvas/utils": "latest"
+    "litecanvas": "latest"
   },
   "files": [
     "dist",
     "src"
-  ]
+  ],
+  "ava": {
+    "files": [
+      "tests/**/*.js"
+    ]
+  }
 }
