@@ -216,6 +216,57 @@ export default function plugin(engine, config = {}) {
       colors[~~settings.background % colors.length]
   }
 
+  // restore path()
+  function path(arg) {
+    warn(
+      "path()",
+      "`new Path2D`",
+      "See https://developer.mozilla.org/en-US/docs/Web/API/Path2D"
+    )
+    return new Path2D(arg)
+  }
+
+  const _core_fill = engine.fill
+  function fill(color, path) {
+    warn("fill(color, path)")
+    if (path instanceof Path2D) {
+      const colors = engine.stat(5)
+      const _ctx = engine.ctx()
+      _ctx.fillStyle = colors[~~color % colors.length]
+      engine.ctx().fill(path)
+    } else {
+      _core_fill(color)
+    }
+  }
+
+  const _core_stroke = engine.stroke
+  function stroke(color, path) {
+    warn("stroke(color, path)")
+    if (path instanceof Path2D) {
+      const colors = engine.stat(5)
+      const _ctx = engine.ctx()
+      _ctx.strokeStyle = colors[~~color % colors.length]
+      engine.ctx().stroke(path)
+    } else {
+      _core_stroke(color)
+    }
+  }
+
+  const _core_clip = engine.clip
+  function clip(pathOrCallback) {
+    warn(
+      "clip(path)",
+      "clip(callback)",
+      "E.g: `clip((ctx) => ctx.rect(0, 0, 200, 200))`"
+    )
+    if (pathOrCallback instanceof Path2D) {
+      const _ctx = engine.ctx()
+      _ctx.clip(pathOrCallback)
+    } else {
+      _core_clip(pathOrCallback)
+    }
+  }
+
   return {
     def: _def,
     seed,
@@ -233,6 +284,10 @@ export default function plugin(engine, config = {}) {
     getcolor,
     mousepos,
     resize,
+    path,
+    fill,
+    stroke,
+    clip,
 
     // restore collision utils
     colrect,
