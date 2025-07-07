@@ -228,8 +228,8 @@ export default function plugin(engine, config = {}) {
 
   const _core_fill = engine.fill
   function fill(color, path) {
-    warn("fill(color, path)")
     if (path instanceof Path2D) {
+      warn("fill(color, path)")
       const colors = engine.stat(5)
       const _ctx = engine.ctx()
       _ctx.fillStyle = colors[~~color % colors.length]
@@ -241,8 +241,8 @@ export default function plugin(engine, config = {}) {
 
   const _core_stroke = engine.stroke
   function stroke(color, path) {
-    warn("stroke(color, path)")
     if (path instanceof Path2D) {
+      warn("stroke(color, path)")
       const colors = engine.stat(5)
       const _ctx = engine.ctx()
       _ctx.strokeStyle = colors[~~color % colors.length]
