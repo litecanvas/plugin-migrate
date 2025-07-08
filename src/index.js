@@ -25,7 +25,7 @@ export default function plugin(engine, config = {}) {
   function warn(old, current, extra = "") {
     if (config.warnings)
       console.warn(
-        `[Migrate] warning: ${old} is removed. ` +
+        `[migrate] ${old} is removed. ` +
           (current ? `Use ${current} instead. ` : "") +
           extra
       )
@@ -201,8 +201,8 @@ export default function plugin(engine, config = {}) {
 
   warn(
     "FPS",
-    "some library to measure the FPS",
-    "Recommendation: https://github.com/mrdoob/stats.js/"
+    "",
+    "but you can use our plugin to measure the fps: https://github.com/litecanvas/plugin-frame-rate-meter"
   )
   _core_def("FPS", "")
 
