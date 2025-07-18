@@ -20,12 +20,13 @@ export default function plugin(engine, config = {}) {
     throw 'Plugin Migrate should be loaded before the "init" event'
   }
 
+  /** @type {LitecanvasOptions} */
   const settings = engine.stat(0)
 
   function warn(old, current, extra = "") {
     if (config.warnings)
       console.warn(
-        `[migrate] ${old} is removed. ` +
+        `[litecanvas/migrate] ${old} is removed. ` +
           (current ? `Use ${current} instead. ` : "") +
           extra
       )
@@ -265,6 +266,10 @@ export default function plugin(engine, config = {}) {
     } else {
       _core_clip(pathOrCallback)
     }
+  }
+
+  if (settings.antialias) {
+    warn('"antialias" option', '"pixelart" option')
   }
 
   return {
