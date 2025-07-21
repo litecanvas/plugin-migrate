@@ -177,6 +177,7 @@ export default function plugin(engine, config = {}) {
   // restore CANVAS removed in v0.84
   _def("CANVAS", engine.canvas())
 
+  // restore a semi-version of the `resize()`
   function resize(width, height) {
     if (settings.autoscale) {
       throw "resize() don't works with autoscale enabled"
@@ -211,10 +212,14 @@ export default function plugin(engine, config = {}) {
     engine.framerate(settings.fps)
   }
 
-  if (settings.background >= 0) {
-    const colors = stat(5)
-    engine.CANVAS.style.backgroundColor =
-      colors[~~settings.background % colors.length]
+  // restore the "background" option
+  if (settings.background != null) {
+    const removeThisListener = engine.listen("before:draw", () => {
+      const colors = stat(5)
+      engine.canvas().style.background =
+        colors[~~settings.background % colors.length]
+      removeThisListener()
+    })
   }
 
   // restore path()
