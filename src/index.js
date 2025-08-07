@@ -277,6 +277,25 @@ export default function plugin(engine, config = {}) {
     warn('"antialias" option', '"pixelart" option')
   }
 
+  if (false === settings.pixelart) {
+    warn('"pixelart" option')
+  }
+
+  if (false === settings.animate) {
+    warn('"animate" option', "pause() in the of your draw()")
+  }
+
+  const _core_paint = engine.paint
+  function paint(w, h, data, options) {
+    let cb = data
+    if (engine.spr && Array.isArray(data)) {
+      cb = () => {
+        engine.spr(0, 0, w, h, data.join("").replace(/ /g, "."))
+      }
+    }
+    return _core_paint(w, h, cb, options)
+  }
+
   return {
     def: _def,
     seed,
@@ -298,6 +317,7 @@ export default function plugin(engine, config = {}) {
     fill,
     stroke,
     clip,
+    paint,
 
     // restore collision utils
     colrect,
