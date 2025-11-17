@@ -16,6 +16,33 @@ export default function plugin(engine, config = {}) {
   config = Object.assign({}, defaults, config)
   const initialized = engine.stat(1)
 
+  const replacements = {
+    def: _def,
+    seed,
+    print,
+    clear,
+    setfps,
+    setvar,
+    textstyle,
+    textmetrics,
+    cliprect,
+    clipcirc,
+    blendmode,
+    transform,
+    getcolor,
+    mousepos,
+    resize,
+    path,
+    fill,
+    stroke,
+    clip,
+    paint,
+
+    // restore collision utils
+    colrect,
+    colcirc,
+  }
+
   if (initialized) {
     throw 'Plugin Migrate should be loaded before the "init" event'
   }
@@ -46,14 +73,9 @@ export default function plugin(engine, config = {}) {
     _fontStyle = value
   }
 
-  const _core_text = engine.text
-  function _text(x, y, str, color = 3, style = _fontStyle) {
-    _core_text(x, y, str, color, style)
-  }
-
   function print(x, y, str, color) {
     warn("print()", "text()")
-    _text(x, y, str, color)
+    engine.text(x, y, str, color)
   }
 
   function textmetrics(text, size) {
@@ -184,13 +206,12 @@ export default function plugin(engine, config = {}) {
     }
 
     warn("resize()", null, "Avoid changing the canvas dimensions at runtime.")
+
     engine.CANVAS.width = width
     _def("W", width)
-    _def("CX", width / 2)
 
     engine.CANVAS.height = height
     _def("H", height)
-    _def("CY", height / 2)
 
     engine.emit("resized", 1)
   }
@@ -213,11 +234,10 @@ export default function plugin(engine, config = {}) {
   }
 
   // restore the "background" option
-  if (settings.background != null) {
+  if (null != settings.background) {
+    warn('"background" option', "You must update your canvas CSS")
     const removeThisListener = engine.listen("before:draw", () => {
-      const colors = stat(5)
-      engine.canvas().style.background =
-        colors[~~settings.background % colors.length]
+      engine.canvas().style.background = getcolor(~~settings.background)
       removeThisListener()
     })
   }
@@ -226,7 +246,7 @@ export default function plugin(engine, config = {}) {
   function path(arg) {
     warn(
       "path()",
-      "`new Path2D`",
+      "`new Path2D()`",
       "See https://developer.mozilla.org/en-US/docs/Web/API/Path2D"
     )
     return new Path2D(arg)
@@ -290,37 +310,23 @@ export default function plugin(engine, config = {}) {
     let cb = data
     if (engine.spr && Array.isArray(data)) {
       cb = () => {
-        engine.spr(0, 0, w, h, data.join("").replace(/ /g, "."))
+        engine.spr(0, 0, data.join("").replace(/ /g, "."))
       }
     }
     return _core_paint(w, h, cb, options)
   }
 
-  return {
-    def: _def,
-    seed,
-    print,
-    clear,
-    setfps,
-    setvar,
-    textstyle,
-    textmetrics,
-    text: _text,
-    cliprect,
-    clipcirc,
-    blendmode,
-    transform,
-    getcolor,
-    mousepos,
-    resize,
-    path,
-    fill,
-    stroke,
-    clip,
-    paint,
-
-    // restore collision utils
-    colrect,
-    colcirc,
+  const _core_spr = engine.spr
+  if (_core_spr && _core_spr.length === 3) {
+    replacements.spr = function (x, y, w, h, pixels) {
+      if (Number.isFinite(w) && w > 0) {
+        warn("spr() width and height", "spr(x, y, pixels)")
+        _core_spr(x, y, pixels)
+      } else {
+        _core_spr(x, y, w)
+      }
+    }
   }
+
+  return replacements
 }
