@@ -310,7 +310,7 @@ export default function plugin(engine, config = {}) {
     let cb = data
     if (engine.spr && Array.isArray(data)) {
       cb = () => {
-        engine.spr(0, 0, data.join("").replace(/ /g, "."))
+        engine.spr(0, 0, data.join("\n"))
       }
     }
     return _core_paint(w, h, cb, options)
