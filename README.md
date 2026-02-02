@@ -4,7 +4,7 @@ Sometimes upgrading litecanvas to a new version can be a lot of work. This plugi
 
 <!-- prettier-ignore -->
 > [!TIP]
-> **This plugin is automatically loaded on Litecanvas playground.**
+> **This plugin is automatically loaded on Litecanvas [playground](https://litecanvas.js.org/).**
 
 ## Install
 
