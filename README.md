@@ -8,9 +8,16 @@ Sometimes upgrading litecanvas to a new version can be a lot of work. This plugi
 
 ## Install
 
-**NPM**: `npm i @litecanvas/plugin-migrate`
+### NPM
 
-**CDN**: `https://unpkg.com/@litecanvas/plugin-migrate/dist/dist.js`
+```
+npm i @litecanvas/plugin-migrate
+```
+
+### CDN
+
+- Unpkg: `https://unpkg.com/@litecanvas/plugin-migrate/dist/dist.js`
+- jsDelivr: `https://cdn.jsdelivr.net/npm/@litecanvas/plugin-migrate/dist/dist.js`
 
 ## Usage
 
