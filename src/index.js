@@ -1,6 +1,6 @@
 import "litecanvas"
 
-import { colrect, colcirc } from "@litecanvas/utils"
+import { colrect, colcirc, wave } from "@litecanvas/utils"
 
 const defaults = {
   warnings: true,
@@ -13,8 +13,13 @@ const defaults = {
  * @returns any
  */
 export default function plugin(engine, config = {}) {
-  config = Object.assign({}, defaults, config)
   const initialized = engine.stat(1)
+
+  if (initialized) {
+    throw 'Plugin Migrate should be loaded before the "init" event'
+  }
+
+  config = Object.assign({}, defaults, config)
 
   const replacements = {
     def: _def,
@@ -39,25 +44,22 @@ export default function plugin(engine, config = {}) {
     paint,
 
     // restore collision utils
-    colrect,
-    colcirc,
-  }
-
-  if (initialized) {
-    throw 'Plugin Migrate should be loaded before the "init" event'
+    colrect: (...args) => {
+      warnUtils("colrect()")
+      return colrect(...args)
+    },
+    colcirc: (...args) => {
+      warnUtils("colrect()")
+      return colcirc(...args)
+    },
+    wave: (...args) => {
+      warnUtils("wave()")
+      return wave(...args)
+    },
   }
 
   /** @type {LitecanvasOptions} */
   const settings = engine.stat(0)
-
-  function warn(old, current, extra = "") {
-    if (config.warnings)
-      console.warn(
-        `[litecanvas/migrate] ${old} is removed. ` +
-          (current ? `Use ${current} instead. ` : "") +
-          extra
-      )
-  }
 
   function seed(value) {
     warn("seed()", "rseed()")
@@ -326,6 +328,19 @@ export default function plugin(engine, config = {}) {
         _core_spr(x, y, w)
       }
     }
+  }
+
+  function warn(old, current, extra = "") {
+    if (config.warnings)
+      console.warn(
+        `[litecanvas/migrate] ${old} is removed. ` +
+          (current ? `Use ${current} instead. ` : "") +
+          extra
+      )
+  }
+
+  function warnUtils(func, type = "function") {
+    warn(func, `This ${type} was moved to @litecanvas/utils package.`)
   }
 
   return replacements
