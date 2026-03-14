@@ -238,9 +238,8 @@ export default function plugin(engine, config = {}) {
   // restore the "background" option
   if (null != settings.background) {
     warn('"background" option', "You must update your canvas CSS")
-    const removeThisListener = engine.listen("before:draw", () => {
+    engine.listen("after:init", () => {
       engine.canvas().style.background = getcolor(~~settings.background)
-      removeThisListener()
     })
   }
 
