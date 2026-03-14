@@ -330,13 +330,33 @@ export default function plugin(engine, config = {}) {
     }
   }
 
+  // restore `listen()` pre v0.200
+  const _core_unlisten = engine.unlisten
+  if (_core_unlisten) {
+    const _core_listen = engine.listen
+    replacements.listen = (eventName, callback) => {
+      _core_listen(eventName, callback)
+      return () => {
+        warnMessage(
+          "listen() not returns a function anymore. Please use unlisten(event, callback) instead"
+        )
+        _core_unlisten(eventName, callback)
+      }
+    }
+  }
+
+  function warnMessage(message) {
+    if (config.warnings) {
+      console.warn(`[litecanvas/migrate] ${message}.`)
+    }
+  }
+
   function warn(old, current, extra = "") {
-    if (config.warnings)
-      console.warn(
-        `[litecanvas/migrate] ${old} is removed. ` +
-          (current ? `Use ${current} instead. ` : "") +
-          extra
-      )
+    warnMessage(
+      `${old} is removed. ` +
+        (current ? `Please use ${current} instead. ` : "") +
+        extra
+    )
   }
 
   function warnUtils(func, type = "function") {
