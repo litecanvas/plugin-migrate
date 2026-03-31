@@ -329,19 +329,29 @@ export default function plugin(engine, config = {}) {
     }
   }
 
-  // restore `listen()` pre v0.200
+  // restore `listen()` and some old events like "quit" pre v0.200
+  const _core_listen = engine.listen
   const _core_unlisten = engine.unlisten
-  if (_core_unlisten) {
-    const _core_listen = engine.listen
-    replacements.listen = (eventName, callback) => {
-      _core_listen(eventName, callback)
-      return () => {
+  replacements.listen = (eventName, callback) => {
+    let ret
+
+    if (_core_unlisten) {
+      if (eventName === "quit") {
+        warn('since v0.203, "quit" event', '"shutdown" event')
+        _core_listen("shutdown", callback)
+      }
+
+      ret = () => {
         warnMessage(
           "listen() not returns a function anymore. Please use unlisten(event, callback) instead"
         )
         _core_unlisten(eventName, callback)
       }
     }
+
+    _core_listen(eventName, callback)
+
+    return ret
   }
 
   function warnMessage(message) {

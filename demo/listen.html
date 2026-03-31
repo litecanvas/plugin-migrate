@@ -26,7 +26,16 @@
       function _once() {
         console.log("DONE at " + T)
         off()
+        quit()
       }
+
+      listen("quit", () => {
+        console.log("FINISHED")
+      })
+
+      listen("shutdown", () => {
+        console.log("FINISHED AGAIN")
+      })
     </script>
   </body>
 </html>
