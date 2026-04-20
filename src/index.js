@@ -227,7 +227,7 @@ export default function plugin(engine, config = {}) {
   warn(
     "FPS",
     "",
-    "but you can use our plugin to measure the fps: https://github.com/litecanvas/plugin-frame-rate-meter",
+    "but you can use our plugin to measure the fps: https://github.com/litecanvas/plugin-frame-rate-meter"
   )
   _core_def("FPS", "")
 
@@ -248,7 +248,7 @@ export default function plugin(engine, config = {}) {
     warn(
       "path()",
       "`new Path2D()`",
-      "See https://developer.mozilla.org/en-US/docs/Web/API/Path2D",
+      "See https://developer.mozilla.org/en-US/docs/Web/API/Path2D"
     )
     return new Path2D(arg)
   }
@@ -284,7 +284,7 @@ export default function plugin(engine, config = {}) {
     warn(
       "clip(path)",
       "clip(callback)",
-      "E.g: `clip((ctx) => ctx.rect(0, 0, 200, 200))`",
+      "E.g: `clip((ctx) => ctx.rect(0, 0, 200, 200))`"
     )
     if (pathOrCallback instanceof Path2D) {
       const _ctx = engine.ctx()
@@ -332,26 +332,17 @@ export default function plugin(engine, config = {}) {
   // restore `listen()` and some old events like "quit" pre v0.200
   const _core_listen = engine.listen
   const _core_unlisten = engine.unlisten
-  replacements.listen = (eventName, callback) => {
-    let ret
+  if (_core_unlisten) {
+    replacements.listen = (eventName, callback) => {
+      _core_listen(eventName, callback)
 
-    if (_core_unlisten) {
-      if (eventName === "quit") {
-        warn('since v0.203, "quit" event', '"shutdown" event')
-        _core_listen("shutdown", callback)
-      }
-
-      ret = () => {
+      return () => {
         warnMessage(
-          "listen() not returns a function anymore. Please use unlisten(event, callback) instead",
+          "listen() not returns a function anymore. Please use unlisten(event, callback) instead."
         )
         _core_unlisten(eventName, callback)
       }
     }
-
-    _core_listen(eventName, callback)
-
-    return ret
   }
 
   // restore `paused()`
@@ -365,7 +356,7 @@ export default function plugin(engine, config = {}) {
 
   function warnMessage(message) {
     if (config.warnings) {
-      console.warn(`[litecanvas/migrate] ${message}.`)
+      console.warn(`[litecanvas/migrate] ${message}`)
     }
   }
 
@@ -373,7 +364,7 @@ export default function plugin(engine, config = {}) {
     warnMessage(
       `${old} is removed. ` +
         (current ? `Please use ${current} instead. ` : "") +
-        extra,
+        extra
     )
   }
 
