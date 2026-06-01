@@ -36,7 +36,6 @@ export default function plugin(engine, config = {}) {
     transform,
     getcolor,
     mousepos,
-    resize,
     path,
     fill,
     stroke,
@@ -57,6 +56,10 @@ export default function plugin(engine, config = {}) {
       return wave(...args)
     },
   }
+
+  // restore TWO_PI constant
+  engine.TWO_PI = engine.PI * 2
+  engine.HALF_PI = engine.PI / 2
 
   /** @type {LitecanvasOptions} */
   const settings = engine.stat(0)
@@ -200,23 +203,6 @@ export default function plugin(engine, config = {}) {
 
   // restore CANVAS removed in v0.84
   _def("CANVAS", engine.canvas())
-
-  // restore a semi-version of the `resize()`
-  function resize(width, height) {
-    if (settings.autoscale) {
-      throw "resize() don't works with autoscale enabled"
-    }
-
-    warn("resize()", null, "Avoid changing the canvas dimensions at runtime.")
-
-    engine.CANVAS.width = width
-    _def("W", width)
-
-    engine.CANVAS.height = height
-    _def("H", height)
-
-    engine.emit("resized", 1)
-  }
 
   for (const key of ["W", "H", "T", "CX", "CY", "MX", "MY"]) {
     if (null != engine[key]) {
