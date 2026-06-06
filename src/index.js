@@ -57,9 +57,9 @@ export default function plugin(engine, config = {}) {
     },
   }
 
-  // restore TWO_PI constant
-  engine.TWO_PI = engine.PI * 2
-  engine.HALF_PI = engine.PI / 2
+  // restore old PI constants
+  def("TWO_PI", engine.PI * 2)
+  def('HALF_PI', engine.PI / 2)
 
   /** @type {LitecanvasOptions} */
   const settings = engine.stat(0)
