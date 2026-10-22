@@ -28,7 +28,7 @@
     "test": "ava --tap | tap-min"
   },
   "devDependencies": {
-    "esbuild": "^0.25.12",
+    "esbuild": "^0.28.2",
     "@litecanvas/jsdom-extras": "^1.1.0",
     "@types/jsdom": "^21.1.7",
     "ava": "^6.4.1",
